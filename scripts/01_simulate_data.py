@@ -12,13 +12,12 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-# Synthetic constants for testing and development only; they are not estimates
-# of real TTC data.
+
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_PATH = PROJECT_ROOT / "outputs/simulated_data.csv"
 N_OBSERVATIONS = 2000
 
-# Hour -> baseline probability of a positive delay. we use this to make the simulated data more realistic, with a higher probability of
+# Hour -> baseline probability of a positive delay.
 HOURLY_POSITIVE_RATE = {
     0: 0.10, 1: 0.08, 2: 0.06, 3: 0.05, 4: 0.07, 5: 0.20,
     6: 0.45, 7: 0.40, 8: 0.35, 9: 0.25, 10: 0.20, 11: 0.20,
@@ -36,7 +35,6 @@ CODE_RATE_MULTIPLIER = {
     "SHP": 0.80,
 }
 
-# Delay sizes and probabilities are used to     
 DELAY_SIZES = np.array([3, 5, 10, 20, 45])
 DELAY_SIZE_PROBS = np.array([0.40, 0.30, 0.18, 0.09, 0.03])
 CODE_OPTIONS = list(CODE_RATE_MULTIPLIER)
