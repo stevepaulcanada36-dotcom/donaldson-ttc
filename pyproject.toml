@@ -1,0 +1,18 @@
+[project]
+name = "donaldson-ttc"
+version = "0.1.0"
+description = "Reproducible descriptive analysis of hourly patterns in TTC subway delay records"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "ipykernel>=6.29,<7",
+    "jupyter>=1.0,<2",
+    "matplotlib>=3.8,<4",
+    "numpy>=1.26,<3",
+    "openpyxl>=3.1,<4",
+    "pandas>=2.2,<4",
+    "pyarrow>=15,<24",
+    "pytest>=8,<9",
+    "requests>=2.31,<3",
+    "tabulate>=0.9,<1",
+]
