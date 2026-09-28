@@ -8,7 +8,7 @@ __pycache__/
 
 # Quarto generated files
 paper/paper.html
-paper/paper.pdf
+# paper/paper.pdf
 paper/paper_files/
 
 # Runtime data and generated analysis artifacts (recreated by the workflow)
