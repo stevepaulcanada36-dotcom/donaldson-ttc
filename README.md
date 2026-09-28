@@ -1,5 +1,18 @@
 # TTC Subway Delay Analysis
 
+### One-time R package setup
+
+`uv` manages the Python environment; it does not install R packages. Install the
+required R packages once in R or RStudio:
+
+```r
+install.packages(c("arrow", "ggplot2", "tinytable"))
+```
+
+`run_all.py` checks for these packages before running the final R presentation
+scripts. If one is missing, it stops with the installation command rather than
+attempting to modify the R installation automatically.
+
 ## Research question
 
 **When are TTC subway delay records most likely to be positive, and how does the recorded size of a positive delay vary across the day?**
@@ -13,14 +26,24 @@ The analysis uses the official TTC Subway Delay Data published through the City 
 
 ## Reproducibility
 
+The project uses a hybrid workflow: Python handles source acquisition, cleaning, statistical analysis, simulation, and tests; R is used for the final paper presentation, with ggplot2 for the figures and tinytable for the tables. Quarto renders the final PDF. This follows the Donaldson guidance allowing R, Python via UV, or a combination of both, while using the recommended `ggplot2` and `tt`/tinytable presentation tools.
+
 Requirements:
 
 - Python 3.12+
 - `uv`
+- R with `Rscript` on PATH
+- R packages `arrow`, `ggplot2`, and `tinytable`
 - Quarto with a working PDF/LaTeX installation
-
-The course clarification for Donaldson permits Python via `uv` (or R, or a combination). This project therefore uses Python rather than R.
 - Internet access for the data-download step
+
+For a new R installation, install the presentation packages once from an R console:
+
+```r
+install.packages(c("arrow", "ggplot2", "tinytable"))
+```
+
+The R presentation scripts do not download, clean, or statistically analyse the TTC source data. They read the saved outputs produced by the Python workflow. The earlier Python presentation scripts are retained in `scripts/` as reference/alternative implementations, but they are not executed by `run_all.py`.
 
 From the project root:
 
@@ -40,8 +63,9 @@ The workflow is:
 6. `04_analysis.py` creates hourly, weekday, monthly, data-profile, data-quality, and mathematical summaries.
 7. `06_historical_comparison.py` processes the downloaded 2024 annual file and creates the historical comparison.
 8. `07_excel_quality_check.py` creates `outputs/ttc_quality_check.xlsx` for a human-readable check of the downloaded 2024 source.
-9. `05_visualizations.py` creates the figures.
-10. Quarto renders `paper/paper.qmd` using saved local files.
+9. `08_make_figures.R` creates the paper figures with ggplot2 from the saved analysis dataset and Python summary tables.
+10. `09_make_tables.R` creates the paper tables with tinytable as LaTeX files.
+11. Quarto renders `paper/paper.qmd` using the saved local presentation outputs.
 
 ### Important data rule
 

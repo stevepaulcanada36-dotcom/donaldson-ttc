@@ -16,10 +16,15 @@ format:
     tbl-pos: H
     colorlinks: true
     linkcolor: black
-    urlcolor: black
+    urlcolor: blue
     citecolor: black
     filecolor: black
     toccolor: black
+include-in-header:
+  text: |
+    \usepackage{tabularray}
+    \usepackage{float}
+    \usepackage{ninecolors}
 jupyter: python3
 bibliography: references.bib
 execute:
@@ -126,17 +131,13 @@ The 2024 file has the same ten core columns as the current analysis and can ther
 
 The following table summarizes the primary file. It gives the reader a compact sense of the size, period, and distribution of the observations before the main hourly analysis.
 
-```{python}
-profile_markdown = data_profile.to_markdown(index=False, floatfmt=".2f")
-profile_markdown += "\n\n: Summary of the primary TTC study dataset. {#tbl-data-profile}"
-display(Markdown(profile_markdown))
-```
+\input{../outputs/tables/data_profile.tex}
 
-@tbl-data-profile shows the overall recorded-delay prevalence and the conditional distribution of positive delays. The next figure represents every observation through delay ranges so that the zero-delay mass and the long positive tail remain visible at paper scale.
+Table \ref{tbl-data-profile} shows the overall recorded-delay prevalence and the conditional distribution of positive delays. The next figure represents every observation through delay ranges so that the zero-delay mass and the long positive tail remain visible at paper scale.
 
 ![Distribution of all recorded TTC subway delay observations. The bins cover every observation, including the large mass at zero, while wider bins retain the long positive tail. These are recorded incident values, not passenger-level delay durations.](../outputs/figures/delay_distribution.png){#fig-delay-distribution width=95%}
 
-@tbl-quality documents missingness in secondary fields. The fields required to construct `Hour` and `Positive Delay` are retained and validated. Missingness in secondary fields is documented because it limits some possible extensions, especially analyses by line, direction, station, or incident type.
+Detailed missingness in secondary fields is reported in Appendix A. The fields required to construct `Hour` and `Positive Delay` are retained and validated. Missingness in secondary fields is documented because it limits some possible extensions, especially analyses by line, direction, station, or incident type.
 
 
 # 3 Statistical analysis
@@ -193,26 +194,9 @@ Across the current study period, `{python} pos_rate`% of recorded observations h
 
 The primary result is the strong variation in positive-delay prevalence across the 24 hours. The lowest observed rate is `{python} low_rate`% at `{python} low_hour`, while the highest is `{python} high_rate`% at `{python} high_hour`. The maximum-to-minimum prevalence ratio is approximately `{python} rate_ratio`.
 
-```{python}
-hour_table = hourly[[
-    "Hour", "observations", "positive_delays",
-    "positive_delay_percent", "median_positive_delay",
-    "rate_difference_pp_vs_overall"
-]].copy()
-hour_table["Hour"] = hour_table["Hour"].map(lambda x: f"{int(x):02d}:00")
-hour_table = hour_table.rename(columns={
-    "observations": "Observations",
-    "positive_delays": "Positive delays",
-    "positive_delay_percent": "Positive-delay rate (%)",
-    "median_positive_delay": "Median positive delay (min)",
-    "rate_difference_pp_vs_overall": "Difference vs overall (pp)",
-})
-markdown = hour_table.to_markdown(index=False, floatfmt=".2f")
-markdown += "\n\n: Hourly prevalence and conditional severity. The confidence intervals and prevalence ratios are reported separately in Appendix C. {#tbl-hourly-results}"
-display(Markdown(markdown))
-```
+\input{../outputs/tables/hourly_results.tex}
 
-@tbl-hourly-results provides the core numerical basis for the main figure. The full Wilson intervals and prevalence ratios are retained in Appendix C so that the main results page remains readable. An hour can have a higher rate than average without necessarily having a substantially higher median delay.
+Table \ref{tbl-hourly-results} provides the core numerical basis for the main figure. The full Wilson intervals and prevalence ratios are retained in Appendix C so that the main results page remains readable. An hour can have a higher rate than average without necessarily having a substantially higher median delay.
 
 ![Hourly positive recorded-delay prevalence with 95% Wilson intervals. The x-axis covers all 24 hours; the y-axis measures the proportion of recorded observations with `Min Delay > 0`.](../outputs/figures/positive_delay_rate_by_hour.png){#fig-hour-rate width=95%}
 
@@ -236,19 +220,9 @@ The hourly median positive delay provides a different story from prevalence. The
 
 The hourly result is the primary story, but supporting temporal summaries help determine whether the pattern is simply an artifact of one particular day or month.
 
-```{python}
-support = weekday[["Day", "observations", "positive_delay_percent", "median_positive_delay"]].copy()
-support = support.rename(columns={
-    "observations": "Observations",
-    "positive_delay_percent": "Positive-delay rate (%)",
-    "median_positive_delay": "Median positive delay (min)",
-})
-md = support.to_markdown(index=False, floatfmt=".2f")
-md += "\n\n: Positive-delay prevalence and median positive delay by weekday. {#tbl-weekday}"
-display(Markdown(md))
-```
+\input{../outputs/tables/weekday.tex}
 
-@tbl-weekday is a supporting comparison rather than a replacement for the hourly analysis. It prevents the paper from treating the 24 hourly categories as the only relevant temporal structure.
+Table \ref{tbl-weekday} is a supporting comparison rather than a replacement for the hourly analysis. It prevents the paper from treating the 24 hourly categories as the only relevant temporal structure.
 
 ![Monthly positive recorded-delay prevalence across the primary study period.](../outputs/figures/positive_delay_rate_by_month.png){#fig-month-rate width=95%}
 
@@ -262,24 +236,9 @@ The downloaded official 2024 annual resource provides a useful benchmark because
 
 The comparison should be read as a shape comparison. If the two curves show similar peaks and troughs, that provides descriptive evidence that the broad time-of-day structure is not unique to a single file. If they differ, the difference is itself informative, but it should not be attributed to a particular operational cause without additional evidence.
 
-```{python}
-if comparison is not None:
-    comp = comparison.copy()
-    comp["Hour"] = comp["Hour"].map(lambda x: f"{int(x):02d}:00")
-    comp = comp[["Hour", "rate_2024", "rate_since_2025", "rate_difference_pp_since_2025_minus_2024", "median_2024", "median_since_2025"]]
-    comp = comp.rename(columns={
-        "rate_2024":"2024 rate (%)",
-        "rate_since_2025":"Since-2025 rate (%)",
-        "rate_difference_pp_since_2025_minus_2024":"Rate difference (pp)",
-        "median_2024":"2024 median (min)",
-        "median_since_2025":"Since-2025 median (min)",
-    })
-    md = comp.to_markdown(index=False, floatfmt=".2f")
-    md += "\n\n: Hour-by-hour comparison between the 2024 benchmark and the primary study period. {#tbl-historical}"
-    display(Markdown(md))
-```
+\input{../outputs/tables/historical.tex}
 
-@tbl-historical gives the numerical comparison behind @fig-historical-comparison. Because the files cover different calendar periods, this comparison should not be interpreted as a before-and-after experiment. It is a historical descriptive benchmark.
+Table \ref{tbl-historical} gives the numerical comparison behind @fig-historical-comparison. Because the files cover different calendar periods, this comparison should not be interpreted as a before-and-after experiment. It is a historical descriptive benchmark.
 
 # 6 Discussion
 
@@ -311,11 +270,11 @@ The main ethical responsibility in this project is therefore interpretive: publi
 
 # 8 Reproducibility and software
 
-The project is organized so that source acquisition is separate from paper rendering. `02_download_data.py` queries the official Toronto Open Data CKAN metadata API, discovers the current and 2024 resources by name, downloads both files, and records their URLs, resource identifiers, timestamps, sizes, and checksums. `03_clean_data.py` creates a Parquet analysis dataset. `04_analysis.py` creates the numerical summaries and effect-size calculations. `06_historical_comparison.py` processes the downloaded 2024 benchmark and compares it with the current period. `07_excel_quality_check.py` produces an Excel workbook containing independent data-quality checks for the downloaded 2024 reference file. `05_visualizations.py` creates the figures, and the Quarto document reads the saved outputs.
+The project is organized so that source acquisition is separate from paper rendering. `02_download_data.py` queries the official Toronto Open Data CKAN metadata API, discovers the current and 2024 resources by name, downloads both files, and records their URLs, resource identifiers, timestamps, sizes, and checksums. `03_clean_data.py` creates a Parquet analysis dataset. `04_analysis.py` creates the numerical summaries and effect-size calculations. `06_historical_comparison.py` processes the downloaded 2024 benchmark and compares it with the current period. `07_excel_quality_check.py` produces an Excel workbook containing independent data-quality checks for the downloaded 2024 reference file. `05_visualizations.py` and `09_make_tables.py` are retained as Python reference implementations of the presentation layer. The final paper uses `08_make_figures.R` with ggplot2 for figures and `09_make_tables.R` with tinytable for tables. The Quarto document reads the saved presentation outputs.
 
 A seeded simulated dataset and automated tests are also included. The simulated tests check schema, value ranges, known constructed relationships, and reproducibility. The actual-data tests check required columns, parseability, derived variables, and basic consistency. The historical reference tests check the 2024 file and its date, time, schema, and delay-value validity. This separation between simulation tests, source-data validation, analysis, and rendering is intended to make failures easier to diagnose.
 
-The main software tools are Python [@python], pandas [@pandas], matplotlib [@matplotlib], PyArrow [@pyarrow], requests [@requests], pytest [@pytest], openpyxl [@openpyxl], and tabulate [@tabulate]. The project environment is managed with uv [@uv], and the PDF is rendered with Quarto [@quarto]. The exact dependency ranges are recorded in `pyproject.toml`, and the final repository should include the generated lock file.
+The main analytical workflow uses Python [@python], pandas [@pandas], PyArrow [@pyarrow], requests [@requests], pytest [@pytest], and openpyxl [@openpyxl]. The presentation layer uses R [@r] with ggplot2 [@ggplot2] for figures and tinytable [@tinytable] for tables. The Python environment is managed with uv [@uv], and the PDF is rendered with Quarto [@quarto]. The exact dependency ranges are recorded in `pyproject.toml`, and the final repository should include the generated lock file.
 
 # 9 Conclusion
 
@@ -356,54 +315,22 @@ The following checklist maps the project structure to the reproducibility requir
 5. **Automated testing:** simulated, actual-data, and 2024 reference tests are separated.
 6. **Statistical analysis:** hourly prevalence, Wilson intervals, medians, risk differences, prevalence ratios, and Cramer's $V$ are generated programmatically.
 7. **Historical validation:** the downloaded 2024 file is kept separate from the primary study period and analysed using the same definitions.
-8. **Visualizations:** figures are generated by `05_visualizations.py` from saved analysis outputs.
-9. **Excel quality check:** `outputs/ttc_quality_check.xlsx` provides a human-readable validation workbook for the 2024 reference file.
-10. **Paper rendering:** Quarto reads local files and does not download data directly.
+8. **Visualizations:** `05_visualizations.py` is retained as a Python reference implementation, while the final paper figures are generated by `08_make_figures.R` with ggplot2.
+9. **Tables:** `09_make_tables.py` is retained as a Python reference implementation, while the final paper tables are generated by `09_make_tables.R` with tinytable.
+10. **Excel quality check:** `outputs/ttc_quality_check.xlsx` provides a human-readable validation workbook for the 2024 reference file.
+11. **Paper rendering:** Quarto reads local files and does not download data directly.
 
 ## C. Complete hourly mathematical results {.unnumbered}
 
 The main results table reports the most important quantities in a compact form. This appendix preserves the additional mathematical details used to interpret the hourly pattern.
 
-```{python}
-ci_table = hourly[[
-    "Hour", "positive_delay_percent",
-    "rate_ci_low_percent", "rate_ci_high_percent",
-    "prevalence_ratio_vs_overall"
-]].copy()
-ci_table["Hour"] = ci_table["Hour"].map(lambda x: f"{int(x):02d}:00")
-ci_table = ci_table.rename(columns={
-    "positive_delay_percent": "Positive-delay rate (%)",
-    "rate_ci_low_percent": "Wilson low (%)",
-    "rate_ci_high_percent": "Wilson high (%)",
-    "prevalence_ratio_vs_overall": "Prevalence ratio",
-})
-display(Markdown(
-    ci_table.to_markdown(index=False, floatfmt=".2f")
-    + "\n\n: Wilson intervals and prevalence ratios by hour. {#tbl-hourly-uncertainty}"
-))
-```
+\input{../outputs/tables/hourly_uncertainty.tex}
 
 The Wilson interval is calculated from the observed positive-delay count and the total number of recorded observations in each hour. The prevalence ratio compares each hourly prevalence with the overall recorded prevalence. Neither quantity is interpreted as a causal effect.
 
-```{python}
-count_table = hourly[[
-    "Hour", "observations", "positive_delays",
-    "median_positive_delay", "rate_difference_pp_vs_overall"
-]].copy()
-count_table["Hour"] = count_table["Hour"].map(lambda x: f"{int(x):02d}:00")
-count_table = count_table.rename(columns={
-    "observations": "Observations",
-    "positive_delays": "Positive delays",
-    "median_positive_delay": "Median positive delay (min)",
-    "rate_difference_pp_vs_overall": "Difference vs overall (pp)",
-})
-display(Markdown(
-    count_table.to_markdown(index=False, floatfmt=".2f")
-    + "\n\n: Counts, conditional median, and absolute hourly contrast. {#tbl-hourly-counts}"
-))
-```
+\input{../outputs/tables/hourly_counts.tex}
 
-Together, @tbl-hourly-uncertainty and @tbl-hourly-counts provide the exact numerical basis for @fig-hour-rate without forcing a nine-column table into the main results pages.
+Together, Table \ref{tbl-hourly-uncertainty} and Table \ref{tbl-hourly-counts} provide the exact numerical basis for @fig-hour-rate without forcing a nine-column table into the main results pages.
 
 \newpage
 
