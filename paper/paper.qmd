@@ -1,15 +1,15 @@
 ---
-title: "When Are TTC Subway Delay Records Most Likely to Be Positive?"
-subtitle: "Hourly patterns in recorded delays, with a 2024 historical benchmark"
+title: "TTC Subway Delay Records Show Strong Hourly Differences in Positive-Delay Prevalence"
+subtitle: "Recorded positive delays are most prevalent at 06:00 and least prevalent at 03:00"
 author: "Allwin"
 thanks: "Code and data are available at: [https://github.com/stevepaulcanada36-dotcom/donaldson-ttc](https://github.com/stevepaulcanada36-dotcom/donaldson-ttc)."
 date: today
 date-format: "D MMMM YYYY"
 abstract: >
-  This paper examines how the prevalence and recorded size of TTC subway delay observations vary by hour of day. Using the TTC Subway Delay Data since 2025, I calculate the hourly proportion with Min Delay > 0 and the median delay among positive records, with 2024 used as a separate historical benchmark. Positive-delay prevalence varies substantially across the day, while the median size of a positive record changes much less. The results describe the TTC's published incident records rather than passenger waiting time and show why frequency and severity should be considered separately.
+  This paper examines how the frequency and recorded size of TTC subway delay observations vary by hour of day. Using 45,475 TTC Subway Delay records from January 2025 through August 2026, I find that 34.76% contain a positive recorded delay. The positive-delay rate ranges from 3.05% at 03:00 to 49.36% at 06:00, while the median positive recorded delay is 5 minutes. A separate 2024 benchmark shows a similar hourly pattern, with a 35.49% overall positive-delay rate. These results describe published TTC incident records rather than passenger waiting time, so frequency and recorded delay size should be interpreted separately.
 format:
   pdf:
-    number-sections: false
+    number-sections: true
     toc: true
     toc-depth: 3
     fig-pos: H
@@ -83,7 +83,7 @@ low_hour_24 = f"{summary24['lowest_delay_hour']:02d}:00"
 high_hour_24 = f"{summary24['highest_delay_hour']:02d}:00"
 ```
 
-# 1 Introduction
+# Introduction {#sec-introduction}
 
 Reliable public transportation depends on service that is predictable for both agencies and riders. Research on transit reliability distinguishes operational measures such as schedule adherence from passenger-oriented measures that incorporate waiting and travel conditions [@diab2015; @jenelius2018]. The TTC publishes an open dataset of subway and SRT service-delay records containing date, time, location, incident code, minimum delay, minimum gap, direction, line, and vehicle fields [@toronto-open-data]. These records are useful for describing operational incidents, but they are not direct observations of passenger waiting time.
 
@@ -91,12 +91,17 @@ This paper asks: **How does the prevalence and size of recorded TTC subway delay
 
 The analysis uses two estimands. The primary estimand is the hour-specific proportion of recorded observations for which `Min Delay > 0`. The secondary estimand is the hour-specific median `Min Delay` conditional on `Min Delay > 0`. The results show that the positive-delay rate is lowest at 03:00 (3.05%) and highest at 06:00 (49.36%), while the typical positive delay is much less variable across hours. These results describe the published incident records; they do not establish that time of day causes delays or measure passenger waiting time.
 
-The paper proceeds as follows. Section 2 describes the TTC source, observation unit, constructed variables, 2024 benchmark, and data quality. Section 3 defines the hourly prevalence and conditional-severity measures. Section 4 presents the main results and supporting weekday and monthly summaries. Section 5 compares the hourly pattern with 2024, and Sections 6 through 9 discuss interpretation, limitations, reproducibility, and the conclusion.
+The paper proceeds as follows. @sec-data describes the TTC source, observation unit,
+constructed variables, 2024 benchmark, and data quality. @sec-analysis defines the
+hourly prevalence and conditional-severity measures. @sec-results presents the main
+results and supporting weekday and monthly summaries. @sec-historical compares the
+hourly pattern with 2024, followed by @sec-discussion, @sec-limitations,
+@sec-reproducibility, and @sec-conclusion.
 
 
-# 2 Data
+# Data {#sec-data}
 
-## 2.1 Primary TTC dataset
+## Primary TTC dataset
 
 The primary source is the **TTC Subway Delay Data since 2025** published through the City of Toronto Open Data Portal [@toronto-open-data]. The City page identifies the dataset as TTC subway and SRT train service delay data and lists the current since-2025 resource alongside earlier annual files [@toronto-open-data]. Earlier annual resources are possible alternatives, but the since-2025 resource is used because it is the current continuous file; the 2024 annual resource is retained separately as a historical benchmark. The portal is refreshed monthly, so the exact locally downloaded file is part of the reproducibility record rather than an assumption that the server will always return the same version.
 
@@ -104,13 +109,13 @@ The downloader does not rely on a manually copied CSV or a hard-coded resource i
 
 The current analysis contains `{python} n_obs` observations covering `{python} date_min` through `{python} date_max`. The raw CSV is downloaded by `scripts/02_download_data.py`, which discovers the official resource through Toronto Open Data's CKAN metadata API and saves the returned file locally. The Quarto document does not contact the TTC server. Cleaning, analysis, visualization, testing, and rendering use the saved local files, which makes the rendered paper reproducible from a fixed data snapshot.
 
-## 2.2 What one observation represents
+## What one observation represents
 
 The unit of analysis is a **recorded TTC subway delay incident**. The source fields include `Date`, `Time`, `Day`, `Station`, `Code`, `Min Delay`, `Min Gap`, `Bound`, `Line`, and `Vehicle`. The most important field for this paper is `Min Delay`, which is treated exactly as the TTC-recorded delay measure. The analysis does not reinterpret it as passenger waiting time, total network delay, or train-level travel-time loss.
 
 The distinction matters because the data-generating process is operational. An observation enters the dataset when an incident is recorded, so the number of observations in an hour reflects the recording process as well as the underlying occurrence of disruptions. This is one reason the paper reports both the number of observations and the positive-delay proportion rather than treating the raw count of records as a direct measure of service quality.
 
-## 2.3 Variable construction
+## Variable construction
 
 Four variables are central to the analysis:
 
@@ -121,13 +126,13 @@ Four variables are central to the analysis:
 
 No observations are removed because `Bound`, `Line`, `Station`, or `Code` is missing. Those fields are not required to calculate either primary estimand. Removing observations on the basis of secondary fields could change the population being described. Instead, their quality is reported explicitly.
 
-## 2.4 Supplemental 2024 dataset
+## Supplemental 2024 dataset
 
 The project also downloads the TTC's official 2024 annual subway-delay resource as a **historical benchmark**. It contains 26,467 observations covering 1 January through 31 December 2024. It is not merged into the primary 2025+ analysis. Keeping the periods separate avoids creating an artificial study period from two files with different publication structures and allows the 2024 file to serve as a transparent comparison.
 
 The 2024 file has the same ten core columns as the current analysis and can therefore be processed with the same definitions of hour and positive delay. The 2024 analysis is particularly useful because it answers a simple robustness question: **Does the broad hourly shape seen in the current data resemble the pattern observed in the immediately preceding annual file?** Similarity is not treated as proof of stability or causality; it is a descriptive historical check.
 
-## 2.5 Data profile and quality
+## Data profile and quality
 
 The following table summarizes the primary file. It gives the reader a compact sense of the size, period, and distribution of the observations before the main hourly analysis.
 
@@ -140,9 +145,9 @@ Table \ref{tbl-data-profile} shows the overall recorded-delay prevalence and the
 Detailed missingness in secondary fields is reported in Appendix A. The fields required to construct `Hour` and `Positive Delay` are retained and validated. Missingness in secondary fields is documented because it limits some possible extensions, especially analyses by line, direction, station, or incident type.
 
 
-# 3 Statistical analysis
+# Statistical analysis {#sec-analysis}
 
-## 3.1 Hourly prevalence
+## Hourly prevalence
 
 For hour $h$, define
 
@@ -154,7 +159,7 @@ where $H_i$ is the hour of observation $i$ and $D_i$ is `Min Delay`. The numerat
 
 The paper reports $\hat{p}_h$ as a percentage. Because some hours contain fewer observations than others, a 95% Wilson interval is shown around each hourly proportion [@wilson-1927]. The interval is a descriptive uncertainty calculation for the observed proportion; it should not be interpreted as a population-sampling confidence interval because the TTC records are not a simple random sample of all possible subway operations.
 
-## 3.2 Conditional severity
+## Conditional severity
 
 For the positive-delay subset, the second estimand is
 
@@ -164,7 +169,7 @@ $$
 
 The median is used because the positive-delay distribution is right-skewed and can contain very large values. A mean is also calculated for diagnostic purposes, but the paper emphasizes the median as the more robust summary of a typical positive record.
 
-## 3.3 Relative and absolute hourly contrasts
+## Relative and absolute hourly contrasts
 
 To quantify how unusual an hour is relative to the overall recorded pattern, two simple contrasts are calculated:
 
@@ -182,41 +187,41 @@ The risk difference is reported in percentage points. The prevalence ratio is di
 
 As a global measure of association between hour and the binary positive-delay indicator, the analysis also reports Cramer's $V$ from the 24-by-2 contingency table. This is included as an effect-size summary so that the paper does not rely on a very small p-value from a large dataset as evidence of practical importance.
 
-# 4 Results
+# Results {#sec-results}
 
-## 4.1 Overall distribution
+## Overall distribution
 
 Across the current study period, `{python} pos_rate`% of recorded observations have a positive `Min Delay`. Among those positive records, the median recorded delay is `{python} median_delay` minutes, the mean is `{python} mean_delay` minutes, and the 95th percentile is `{python} p95_delay` minutes. The maximum recorded value is `{python} max_delay` minutes.
 
 @fig-delay-distribution in Section 2 shows why prevalence and severity should not be collapsed into one statistic. A large concentration at zero coexists with a right tail of positive observations. Reporting only the mean would obscure the fact that most observations are zero, while reporting only the proportion positive would ignore the size of the positive records.
 
-## 4.2 The hourly pattern
+## The hourly pattern
 
-The primary result is the strong variation in positive-delay prevalence across the 24 hours. The lowest observed rate is `{python} low_rate`% at `{python} low_hour`, while the highest is `{python} high_rate`% at `{python} high_hour`. The maximum-to-minimum prevalence ratio is approximately `{python} rate_ratio`.
+The primary result is the strong variation in positive-delay prevalence across the 24 hours. The lowest observed rate is `{python} low_rate`% at `{python} low_hour`, while the highest is `{python} high_rate`% at `{python} high_hour`. The maximum-to-minimum prevalence ratio is approximately `{python} rate_ratio`. The hourly extremes should be interpreted as patterns in recorded TTC incident records rather than as direct measures of passenger service. TTC reports that subway service generally operates from approximately 6:00 a.m. to 2:00 a.m. Monday through Saturday and from approximately 8:00 a.m. to 2:00 a.m. on Sundays, with exact times varying by station [@ttc-service-hours]. The 03:00 estimate is based on only 262 observations, compared with 2,040 observations at 06:00. The sharp increase from 04:00 to 05:00 and 06:00 is therefore consistent with the transition into regular subway service, although the incident records alone cannot establish the operational reason for the pattern.
 
 \input{../outputs/tables/hourly_results.tex}
 
 Table \ref{tbl-hourly-results} provides the core numerical basis for the main figure. The full Wilson intervals and prevalence ratios are retained in Appendix C so that the main results page remains readable. An hour can have a higher rate than average without necessarily having a substantially higher median delay.
 
-![Hourly positive recorded-delay prevalence with 95% Wilson intervals. The x-axis covers all 24 hours; the y-axis measures the proportion of recorded observations with `Min Delay > 0`.](../outputs/figures/positive_delay_rate_by_hour.png){#fig-hour-rate width=95%}
+![Hourly positive recorded-delay prevalence with 95% Wilson intervals. The recorded prevalence varies substantially across the day, reaching its highest value at 06:00 and its lowest at 03:00.](../outputs/figures/positive_delay_rate_by_hour.png){#fig-hour-rate width=95%}
 
-## 4.3 Mathematical summary of hourly association
+## Mathematical summary of hourly association
 
 The contingency-table analysis gives a Cramer's $V$ of `{python} cramers_v_value` for the association between hour and the positive-delay indicator. The corresponding Pearson chi-square statistic is `{python} chi_square_value`. These quantities are not presented as evidence that hour causes delay. They summarize how much the observed positive/zero composition varies across the hourly categories.
 
 The effect is also easy to see without a formal test: the observed prevalence at the highest-rate hour is substantially above the overall rate, while the lowest-rate hours are substantially below it. The substantive conclusion therefore comes from the size and shape of the hourly differences, not from statistical significance alone.
 
-## 4.4 Delay severity conditional on being positive
+## Delay severity conditional on being positive
 
 The hourly median positive delay provides a different story from prevalence. The median is `{python} median_delay` minutes overall, and the hourly values are generally clustered around a small number of minutes despite the much larger variation in the probability of observing a positive value. @fig-hour-severity shows this conditional pattern directly.
 
-![Median recorded delay among positive-delay observations by hour.](../outputs/figures/median_positive_delay_by_hour.png){#fig-hour-severity width=95%}
+![Median recorded delay among positive-delay observations by hour. Unlike positive-delay prevalence, the hourly median remains clustered around a small number of minutes, showing that frequency and conditional severity vary differently across the day.](../outputs/figures/median_positive_delay_by_hour.png){#fig-hour-severity width=95%}
 
 ![All positive-delay observations by hour, with a median line over the individual records. A symmetric log-like vertical scale keeps extreme values visible without allowing them to dominate the plot.](../outputs/figures/positive_delay_observations_by_hour.png){#fig-hour-observations width=95%}
 
 @fig-hour-observations is included as a diagnostic view of the underlying observations. The distribution is not symmetric and contains extreme values, which supports the decision to emphasize medians rather than relying on a mean alone.
 
-## 4.5 Weekday and monthly patterns
+## Weekday and monthly patterns
 
 The hourly result is the primary story, but supporting temporal summaries help determine whether the pattern is simply an artifact of one particular day or month.
 
@@ -224,11 +229,11 @@ The hourly result is the primary story, but supporting temporal summaries help d
 
 Table \ref{tbl-weekday} is a supporting comparison rather than a replacement for the hourly analysis. It prevents the paper from treating the 24 hourly categories as the only relevant temporal structure.
 
-![Monthly positive recorded-delay prevalence across the primary study period.](../outputs/figures/positive_delay_rate_by_month.png){#fig-month-rate width=95%}
+![Monthly positive recorded-delay prevalence across the primary study period. The overall rate varies across months, but the monthly pattern is used only as supporting context for the main hourly analysis.](../outputs/figures/positive_delay_rate_by_month.png){#fig-month-rate width=95%}
 
 @fig-month-rate provides a second diagnostic: if the overall rate changed substantially from month to month, a single pooled hourly curve could combine different operating periods. The monthly results are therefore used to qualify, rather than replace, the main hourly conclusion.
 
-# 5 Historical comparison with 2024
+# Historical comparison with 2024 {#sec-historical}
 
 The downloaded official 2024 annual resource provides a useful benchmark because it covers a complete calendar year. In 2024, there were `{python} n_obs_24` observations and `{python} pos_rate_24`% were positive-delay records. The median positive recorded delay was `{python} median_24` minutes. The lowest hourly rate occurred at `{python} low_hour_24` and the highest at `{python} high_hour_24`.
 
@@ -240,7 +245,7 @@ The comparison should be read as a shape comparison. If the two curves show simi
 
 Table \ref{tbl-historical} gives the numerical comparison behind @fig-historical-comparison. Because the files cover different calendar periods, this comparison should not be interpreted as a before-and-after experiment. It is a historical descriptive benchmark.
 
-# 6 Discussion
+# Discussion {#sec-discussion}
 
 Three findings stand out. First, the probability that a recorded observation has a positive `Min Delay` changes substantially across the day. Second, the size of a positive delay, summarized by the median, varies much less dramatically than the prevalence of positive records. Third, the historical 2024 file provides a way to assess whether the hourly shape is broadly repeatable across adjacent data releases without mixing the periods into one undifferentiated sample.
 
@@ -250,9 +255,9 @@ The analysis also demonstrates why the observation process deserves attention. T
 
 The heterogeneity of incident records reinforces this caution. The dataset contains operational records generated under different circumstances, and the published fields do not provide a complete measure of exposure, train operations, passenger volumes, or the circumstances surrounding every incident. A causal explanation would therefore require additional information beyond this dataset.
 
-# 7 Limitations and ethics
+# Limitations and ethics {#sec-limitations}
 
-## 7.1 Measurement limitations
+## Measurement limitations
 
 The most important limitation is that `Min Delay` is a recorded operational field, not a passenger-level outcome. The analysis therefore cannot answer how long a passenger waited, how many passengers were affected, or how much total travel time was lost.
 
@@ -262,21 +267,21 @@ A third limitation is temporal. The primary dataset begins in 2025, while the hi
 
 Finally, the analysis is observational and descriptive. The hourly patterns should not be interpreted as evidence that time of day itself causes delays. Rush-hour demand, scheduled service, maintenance, weather, special events, incident mix, and many other factors could contribute to the observed pattern, but this paper does not identify their causal effects.
 
-## 7.2 Ethics and privacy
+## Ethics and privacy
 
 The analysis uses a public operational dataset rather than individual passenger records. The unit of analysis is an incident record, and the paper does not attempt to identify individual riders, employees, or other persons. Vehicle and location fields are used only for descriptive data-quality and operational context. No attempt is made to infer sensitive characteristics about people from incident records.
 
 The main ethical responsibility in this project is therefore interpretive: public operational data should not be presented as if they directly measured individual passenger experience or as if descriptive correlations established operational causes.
 
-# 8 Reproducibility and software
+# Reproducibility and software {#sec-reproducibility}
 
 The project is organized so that source acquisition is separate from paper rendering. `02_download_data.py` queries the official Toronto Open Data CKAN metadata API, discovers the current and 2024 resources by name, downloads both files, and records their URLs, resource identifiers, timestamps, sizes, and checksums. `03_clean_data.py` creates a Parquet analysis dataset. `04_analysis.py` creates the numerical summaries and effect-size calculations. `06_historical_comparison.py` processes the downloaded 2024 benchmark and compares it with the current period. `07_excel_quality_check.py` produces an Excel workbook containing independent data-quality checks for the downloaded 2024 reference file. `05_visualizations.py` and `09_make_tables.py` are retained as Python reference implementations of the presentation layer. The final paper uses `08_make_figures.R` with ggplot2 for figures and `09_make_tables.R` with tinytable for tables. The Quarto document reads the saved presentation outputs.
 
 A seeded simulated dataset and automated tests are also included. The simulated tests check schema, value ranges, known constructed relationships, and reproducibility. The actual-data tests check required columns, parseability, derived variables, and basic consistency. The historical reference tests check the 2024 file and its date, time, schema, and delay-value validity. This separation between simulation tests, source-data validation, analysis, and rendering is intended to make failures easier to diagnose.
 
-The main analytical workflow uses Python [@python], pandas [@pandas], PyArrow [@pyarrow], requests [@requests], pytest [@pytest], and openpyxl [@openpyxl]. The presentation layer uses R [@r] with ggplot2 [@ggplot2] for figures and tinytable [@tinytable] for tables. The Python environment is managed with uv [@uv], and the PDF is rendered with Quarto [@quarto]. The exact dependency ranges are recorded in `pyproject.toml`, and the final repository should include the generated lock file.
+The main analytical workflow uses Python [@python], NumPy [@harris2020array], pandas [@pandas], PyArrow [@pyarrow], requests [@requests], pytest [@pytest], and openpyxl [@openpyxl]. The presentation layer uses R [@r] with the `arrow` package [@r-arrow] for reading the Parquet analysis dataset, ggplot2 [@ggplot2] for figures, and tinytable [@tinytable] for tables. The retained Python reference implementations use matplotlib [@matplotlib] and tabulate [@tabulate] but are not used for the final paper figures or tables. The Python environment is managed with uv [@uv], and the PDF is rendered with Quarto [@quarto]. The exact dependency ranges are recorded in `pyproject.toml`, with the resolved environment captured by `uv.lock`.
 
-# 9 Conclusion
+# Conclusion {#sec-conclusion}
 
 The TTC subway delay records show a clear time-of-day pattern in the prevalence of positive recorded delays. The most important descriptive result is therefore about **how frequently positive delay records occur**, while the conditional median shows that the typical size of a positive record is much less variable across hours. The 2024 historical benchmark adds useful context without changing the primary study population.
 
@@ -285,8 +290,6 @@ The paper's central conclusion is intentionally narrow: TTC's published incident
 # Acknowledgments {.unnumbered}
 
 The author thanks the City of Toronto and the Toronto Transit Commission for publishing the TTC Subway Delay Data through Toronto Open Data.
-
-^[Code and data supporting this analysis are available at: **https://github.com/stevepaulcanada36-dotcom/donaldson-ttc**.]
 
 \newpage
 
@@ -306,7 +309,7 @@ The `Station` field is also not treated as a clean geographic identifier. It can
 
 ## B. Reproducibility checklist {.unnumbered}
 
-The following checklist maps the project structure to the reproducibility requirements:
+The following checklist summarizes the reproducibility workflow used in the project:
 
 1. **Source identification:** official TTC Subway Delay Data resources are discovered and downloaded programmatically.
 2. **Local raw data:** the source CSV is saved before cleaning or rendering.
@@ -328,9 +331,7 @@ The main results table reports the most important quantities in a compact form. 
 
 The Wilson interval is calculated from the observed positive-delay count and the total number of recorded observations in each hour. The prevalence ratio compares each hourly prevalence with the overall recorded prevalence. Neither quantity is interpreted as a causal effect.
 
-\input{../outputs/tables/hourly_counts.tex}
-
-Together, Table \ref{tbl-hourly-uncertainty} and Table \ref{tbl-hourly-counts} provide the exact numerical basis for @fig-hour-rate without forcing a nine-column table into the main results pages.
+Table \ref{tbl-hourly-uncertainty} provides the exact Wilson intervals and prevalence ratios used to interpret @fig-hour-rate without adding a redundant count table to the appendix.
 
 \newpage
 

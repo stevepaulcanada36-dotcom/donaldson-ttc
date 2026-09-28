@@ -26,7 +26,7 @@ The analysis uses the official TTC Subway Delay Data published through the City 
 
 ## Reproducibility
 
-The project uses a hybrid workflow: Python handles source acquisition, cleaning, statistical analysis, simulation, and tests; R is used for the final paper presentation, with ggplot2 for the figures and tinytable for the tables. Quarto renders the final PDF. This follows the Donaldson guidance allowing R, Python via UV, or a combination of both, while using the recommended `ggplot2` and `tt`/tinytable presentation tools.
+The project uses a hybrid workflow: Python handles source acquisition, cleaning, statistical analysis, simulation, and tests; R is used for the final paper presentation, with ggplot2 for the figures and tinytable for the tables. Quarto renders the final PDF. The project uses a hybrid Python/R workflow: Python handles source acquisition, cleaning, statistical analysis, simulation, and testing; R is used for the final figures and tables; and Quarto renders the paper.
 
 Requirements:
 
