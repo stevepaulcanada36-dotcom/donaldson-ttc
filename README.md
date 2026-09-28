@@ -69,7 +69,7 @@ The workflow is:
 
 ### Important data rule
 
-**No TTC delay dataset is bundled in this repository.** The raw current CSV and the 2024 historical XLSX are both obtained programmatically from the official Toronto Open Data resource metadata by `02_download_data.py`.
+**Data availability:** The repository includes the downloaded TTC data snapshots used for the analysis. The download script can also retrieve the source data again from the City of Toronto Open Data portal. The analysis dataset is generated from the downloaded source files by the cleaning workflow.
 
 The paper itself does **not** download data. After the downloader finishes, cleaning, analysis, visualization, testing, and Quarto rendering use the saved local snapshot.
 
