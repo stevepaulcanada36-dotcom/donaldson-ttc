@@ -1,7 +1,8 @@
 #' 09_make_tables.R
 #'
 #' Final presentation tables for the Donaldson TTC paper.
-#' Python handles download, cleaning, statistical analysis, simulation, and tests.
+#' Python handles download, cleaning, statistical analysis,
+#' simulation, and tests.
 #' This script uses tinytable for the final PDF tables.
 
 suppressPackageStartupMessages({
@@ -108,11 +109,32 @@ names(hourly_main) <- c(
   "Positive-delay rate (percent)", "Median positive delay (min)",
   "Difference vs overall (percentage points)"
 )
-hourly_main$Observations <- format(hourly_main$Observations, big.mark = ",", scientific = FALSE)
-hourly_main$`Positive delays` <- format(hourly_main$`Positive delays`, big.mark = ",", scientific = FALSE)
-hourly_main$`Positive-delay rate (percent)` <- sprintf("%.2f", hourly_main$`Positive-delay rate (percent)`)
-hourly_main$`Median positive delay (min)` <- sprintf("%.1f", hourly_main$`Median positive delay (min)`)
-hourly_main$`Difference vs overall (percentage points)` <- sprintf("%.2f", hourly_main$`Difference vs overall (percentage points)`)
+hourly_main$Observations <- format(
+  hourly_main$Observations,
+  big.mark = ",",
+  scientific = FALSE
+)
+
+hourly_main$`Positive delays` <- format(
+  hourly_main$`Positive delays`,
+  big.mark = ",",
+  scientific = FALSE
+)
+
+hourly_main$`Positive-delay rate (percent)` <- sprintf(
+  "%.2f",
+  hourly_main$`Positive-delay rate (percent)`
+)
+
+hourly_main$`Median positive delay (min)` <- sprintf(
+  "%.1f",
+  hourly_main$`Median positive delay (min)`
+)
+
+hourly_main$`Difference vs overall (percentage points)` <- sprintf(
+  "%.2f",
+  hourly_main$`Difference vs overall (percentage points)`
+)
 
 save_table(
   hourly_main,
@@ -127,11 +149,38 @@ save_table(
 # Supporting weekday table.
 weekday <- read.csv(file.path(tables_path, "weekday_summary.csv"),
                     check.names = FALSE)
-weekday_main <- weekday[, c("Day", "observations", "positive_delay_percent", "median_positive_delay")]
-names(weekday_main) <- c("Day", "Observations", "Positive-delay rate (percent)", "Median positive delay (min)")
-weekday_main$Observations <- format(weekday_main$Observations, big.mark = ",", scientific = FALSE)
-weekday_main$`Positive-delay rate (percent)` <- sprintf("%.2f", weekday_main$`Positive-delay rate (percent)`)
-weekday_main$`Median positive delay (min)` <- sprintf("%.1f", weekday_main$`Median positive delay (min)`)
+weekday_main <- weekday[
+  ,
+  c(
+    "Day",
+    "observations",
+    "positive_delay_percent",
+    "median_positive_delay"
+  )
+]
+
+names(weekday_main) <- c(
+  "Day",
+  "Observations",
+  "Positive-delay rate (percent)",
+  "Median positive delay (min)"
+)
+
+weekday_main$Observations <- format(
+  weekday_main$Observations,
+  big.mark = ",",
+  scientific = FALSE
+)
+
+weekday_main$`Positive-delay rate (percent)` <- sprintf(
+  "%.2f",
+  weekday_main$`Positive-delay rate (percent)`
+)
+
+weekday_main$`Median positive delay (min)` <- sprintf(
+  "%.1f",
+  weekday_main$`Median positive delay (min)`
+)
 
 save_table(
   weekday_main,
@@ -152,19 +201,42 @@ comparison_main <- comparison[, c(
 )]
 names(comparison_main) <- c(
   "Hour", "2024 rate (percent)", "Since-2025 rate (percent)",
-  "Rate difference (percentage points)", "2024 median (min)", "Since-2025 median (min)"
+  "Rate difference (percentage points)",
+  "2024 median (min)",
+  "Since-2025 median (min)"
 )
-comparison_main$Hour <- format_hour(comparison_main$Hour)
-comparison_main$`2024 rate (percent)` <- sprintf("%.2f", comparison_main$`2024 rate (percent)`)
-comparison_main$`Since-2025 rate (percent)` <- sprintf("%.2f", comparison_main$`Since-2025 rate (percent)`)
-comparison_main$`Rate difference (percentage points)` <- sprintf("%.2f", comparison_main$`Rate difference (percentage points)`)
-comparison_main$`2024 median (min)` <- sprintf("%.1f", comparison_main$`2024 median (min)`)
-comparison_main$`Since-2025 median (min)` <- sprintf("%.1f", comparison_main$`Since-2025 median (min)`)
+comparison_main$`2024 rate (percent)` <- sprintf(
+  "%.2f",
+  comparison_main$`2024 rate (percent)`
+)
+
+comparison_main$`Since-2025 rate (percent)` <- sprintf(
+  "%.2f",
+  comparison_main$`Since-2025 rate (percent)`
+)
+
+comparison_main$`Rate difference (percentage points)` <- sprintf(
+  "%.2f",
+  comparison_main$`Rate difference (percentage points)`
+)
+
+comparison_main$`2024 median (min)` <- sprintf(
+  "%.1f",
+  comparison_main$`2024 median (min)`
+)
+
+comparison_main$`Since-2025 median (min)` <- sprintf(
+  "%.1f",
+  comparison_main$`Since-2025 median (min)`
+)
 
 save_table(
   comparison_main,
   "historical.tex",
-  "Hour-by-hour comparison between the 2024 benchmark and the primary study period.",
+  paste(
+    "Hour-by-hour comparison between the 2024 benchmark and ",
+    "the primary study period."
+  ),
   "tbl-historical",
   width = c(0.08, 0.14, 0.16, 0.19, 0.18, 0.19),
   align = "lrrrrr",
@@ -204,10 +276,27 @@ names(counts) <- c(
   "Median positive delay (min)", "Difference vs overall (percentage points)"
 )
 counts$Hour <- format_hour(counts$Hour)
-counts$Observations <- format(counts$Observations, big.mark = ",", scientific = FALSE)
-counts$`Positive delays` <- format(counts$`Positive delays`, big.mark = ",", scientific = FALSE)
-counts$`Median positive delay (min)` <- sprintf("%.1f", counts$`Median positive delay (min)`)
-counts$`Difference vs overall (percentage points)` <- sprintf("%.2f", counts$`Difference vs overall (percentage points)`)
+counts$Observations <- format(
+  counts$Observations,
+  big.mark = ",",
+  scientific = FALSE
+)
+
+counts$`Positive delays` <- format(
+  counts$`Positive delays`,
+  big.mark = ",",
+  scientific = FALSE
+)
+
+counts$`Median positive delay (min)` <- sprintf(
+  "%.1f",
+  counts$`Median positive delay (min)`
+)
+
+counts$`Difference vs overall (percentage points)` <- sprintf(
+  "%.2f",
+  counts$`Difference vs overall (percentage points)`
+)
 
 save_table(
   counts,

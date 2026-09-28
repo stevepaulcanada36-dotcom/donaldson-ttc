@@ -20,14 +20,28 @@ if (length(file_arg) > 0) {
   project_root <- normalizePath(".")
 }
 
-analysis_path <- file.path(project_root, "data", "analysis_data", "ttc_delay_analysis.parquet")
+analysis_path <- file.path(
+  project_root,
+  "data",
+  "analysis_data",
+  "ttc_delay_analysis.parquet"
+)
 tables_path <- file.path(project_root, "outputs", "tables")
 figures_path <- file.path(project_root, "outputs", "figures")
 dir.create(figures_path, recursive = TRUE, showWarnings = FALSE)
 
-hourly <- read.csv(file.path(tables_path, "hourly_summary.csv"), check.names = FALSE)
-monthly <- read.csv(file.path(tables_path, "monthly_summary.csv"), check.names = FALSE)
-comparison <- read.csv(file.path(tables_path, "hourly_2024_vs_since_2025.csv"), check.names = FALSE)
+hourly <- read.csv(
+  file.path(tables_path, "hourly_summary.csv"),
+  check.names = FALSE
+)
+monthly <- read.csv(
+  file.path(tables_path, "monthly_summary.csv"),
+  check.names = FALSE
+)
+comparison <- read.csv(
+  file.path(tables_path, "hourly_2024_vs_since_2025.csv"),
+  check.names = FALSE
+)
 data <- read_parquet(analysis_path)
 
 # Consistent restrained presentation style.
@@ -66,7 +80,13 @@ breaks <- c(-0.5, 0.5, 5.5, 15.5, 30.5, 60.5, 120.5, 300.5, 600.5, 900.5, Inf)
 labels <- c("0", "1–5", "6–15", "16–30", "31–60", "61–120",
             "121–300", "301–600", "601–900", "901+")
 
-bins <- cut(data$`Min Delay`, breaks = breaks, labels = labels, include.lowest = TRUE, right = TRUE)
+bins <- cut(
+  data$`Min Delay`,
+  breaks = breaks,
+  labels = labels,
+  include.lowest = TRUE,
+  right = TRUE
+)
 distribution <- as.data.frame(table(bins), stringsAsFactors = FALSE)
 names(distribution) <- c("Delay", "Observations")
 distribution$Delay <- factor(distribution$Delay, levels = labels)
@@ -96,7 +116,10 @@ p3 <- ggplot(hourly, aes(x = Hour, y = median_positive_delay)) +
   geom_line(colour = ink, linewidth = 0.7) +
   geom_point(colour = ink, size = 1.7) +
   scale_x_continuous(breaks = 0:23, labels = sprintf("%02d", 0:23)) +
-  labs(x = "Hour of day", y = "Median recorded delay among positive records (minutes)") +
+  labs(
+    x = "Hour of day",
+    y = "Median recorded delay among positive records (minutes)"
+  ) +
   base_theme
 save_plot(p3, "median_positive_delay_by_hour.png", 7, 4.5)
 
@@ -113,7 +136,10 @@ p4 <- ggplot(positive, aes(x = jitter, y = `Min Delay`)) +
              colour = ink, size = 1.2) +
   scale_x_continuous(breaks = 0:23, labels = sprintf("%02d", 0:23)) +
   scale_y_continuous(trans = scales::pseudo_log_trans(base = 10)) +
-  labs(x = "Hour of day", y = "Recorded positive delay (minutes; symmetric log-like scale)") +
+  labs(
+    x = "Hour of day",
+    y = "Recorded positive delay (minutes; symmetric log-like scale)"
+  ) +
   base_theme
 save_plot(p4, "positive_delay_observations_by_hour.png", 7, 4.5)
 
